@@ -8,8 +8,8 @@ app = Flask(__name__)
 CORS(app)
 
 # ✅ MongoDB connection
-load_dotenv()
-uri = os.getenv("MONGO_URI")
+
+uri = "mongodb+srv://ywala471:<AY4H5idHYBHs87P6>@libraryapp.nrx2phx.mongodb.net/?retryWrites=true&w=majority&appName=LibraryApp"
 client = MongoClient(uri)
 db = client['library_web']  # 🔥 your db name
 users_collection = db['users']  # 🔥 your collection name
