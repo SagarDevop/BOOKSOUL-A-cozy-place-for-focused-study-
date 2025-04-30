@@ -9,8 +9,7 @@ CORS(app)
 
 # ✅ MongoDB connection
 
-uri = "mongodb+srv://ywala471:<AY4H5idHYBHs87P6>@libraryapp.nrx2phx.mongodb.net/?retryWrites=true&w=majority&appName=LibraryApp"
-client = MongoClient(uri)
+client = MongoClient("mongodb://localhost:27017/")
 db = client['library_web']  # 🔥 your db name
 users_collection = db['users']  # 🔥 your collection name
 contact_collection = db['contact']  # 🔥 your collection name
