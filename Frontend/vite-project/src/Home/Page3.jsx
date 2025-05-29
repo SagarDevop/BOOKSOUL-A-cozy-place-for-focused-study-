@@ -27,7 +27,7 @@ export default function Page3() {
   }, []);
 
   useEffect(() => {
-    fetch('http://localhost:5000/booked-seats')
+    fetch('https://booksoul-a-cozy-place-for-focused-study.onrender.com/booked-seats')
       .then(res => res.json())
       .then(data => setBookedSeats(data));
   }, []);
@@ -56,7 +56,7 @@ export default function Page3() {
     }
   
     try {
-      const response = await fetch('http://localhost:5000/book-seats', {
+      const response = await fetch('https://booksoul-a-cozy-place-for-focused-study.onrender.com/book-seats', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

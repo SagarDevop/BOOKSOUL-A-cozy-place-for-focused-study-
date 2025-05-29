@@ -37,7 +37,7 @@ const AuthForm = () => {
     setSuccess(false);
 
     try {
-      const baseUrl = 'http://localhost:5000';
+      const baseUrl = 'https://booksoul-a-cozy-place-for-focused-study.onrender.com';
       const url = isLogin ? `${baseUrl}/login` : `${baseUrl}/signup`;
       const response = await fetch(url, {
         method: 'POST',

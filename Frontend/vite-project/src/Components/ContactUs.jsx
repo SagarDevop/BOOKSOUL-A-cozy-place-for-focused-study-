@@ -27,7 +27,7 @@ export default function ContactUs() {
     setIsSubmitting(true); // button disabled + show spinner
 
     try {
-      const response = await fetch('http://localhost:5000/contact', {
+      const response = await fetch('https://booksoul-a-cozy-place-for-focused-study.onrender.com/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
