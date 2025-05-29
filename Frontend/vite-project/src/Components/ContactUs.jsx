@@ -27,20 +27,31 @@ export default function ContactUs() {
     setIsSubmitting(true); // button disabled + show spinner
 
     try {
-      // Simulate form sending (if no real backend yet, use a timeout)
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // If connected to backend, make POST request here instead
-
-      toast.success("Message sent successfully! 🚀");
-
-      setContactFormData({ name: "", email: "", message: "" }); // reset form
+      const response = await fetch('http://localhost:5000/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: contactformData.name,
+          email: contactformData.email,
+          message: contactformData.message,
+          timestamp: currentTimestamp,
+        }),
+      });
+    
+      if (!response.ok) {
+        throw new Error("Failed to send message.");
+      }
+    
+    toast.success("Message sent successfully! 🚀");
+    setContactFormData({ name: "", email: "", message: "" }); // reset form
     } catch (error) {
-      toast.error("Failed to send message. Try again.");
-    } finally {
-      setIsSubmitting(false); // re-enable button after 2 seconds
+    console.error("Error submitting contact form:", error);
+    toast.error("Failed to send message. Try again.");
     }
   };
+    
 
   const handleWhatsAppClick = () => {
     window.open(`https://wa.me/${whatsappNumber}`, "_blank");

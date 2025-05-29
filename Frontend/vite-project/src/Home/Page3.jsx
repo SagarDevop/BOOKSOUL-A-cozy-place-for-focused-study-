@@ -45,30 +45,42 @@ export default function Page3() {
   const handleBooking = async () => {
     if (selectedSeats.length === 0) return;
   
+    // 🔥 Get email from localStorage or context/state (based on your app)
+   const user = JSON.parse(localStorage.getItem('user'));
+   const email = user?.email;
+
+  
+    if (!email) {
+      toast.error("Please log in to book seats.");
+      return;
+    }
+  
     try {
       const response = await fetch('http://localhost:5000/book-seats', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ seats: selectedSeats }),
+        body: JSON.stringify({ seats: selectedSeats, email }), // ✅ Include email
       });
   
       if (response.ok) {
         const data = await response.json();
         console.log('Seats booked:', data);
-        // Update frontend
         setBookedSeats([...bookedSeats, ...selectedSeats]);
         setSelectedSeats([]);
         toast.success("Seats booked successfully!");
       } else {
-        console.error('Booking failed');
-        toast.error("Failed to book seats. Please try again.");
+        const errData = await response.json();
+        console.error('Booking failed:', errData);
+        toast.error(errData.error || "Booking failed. Please log in.");
       }
     } catch (error) {
       console.error('Error booking seats:', error);
+      toast.error("Something went wrong.");
     }
   };
+  
   
   
 

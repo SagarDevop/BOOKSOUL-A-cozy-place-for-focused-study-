@@ -37,7 +37,8 @@ const AuthForm = () => {
     setSuccess(false);
 
     try {
-      const url = isLogin ? 'http://127.0.0.1:5000/login' : 'http://127.0.0.1:5000/signup';
+      const baseUrl = 'http://localhost:5000';
+      const url = isLogin ? `${baseUrl}/login` : `${baseUrl}/signup`;
       const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -72,6 +73,7 @@ const AuthForm = () => {
     } catch (err) {
       console.error(err);
       toast.error("An unexpected error occurred!");
+      console.log("Error:", err);
     } finally {
       setLoading(false);
     }
