@@ -39,6 +39,10 @@ users_collection = db['users']  # 🔥 your collection name
 contact_collection = db['contact']  # 🔥 your collection name
 seat_booking_collection = db['seatBookings'] 
 
+@app.route('/')
+def home():
+    return jsonify({"message": "Welcome to BookSoul API!"})
+
 @app.route('/signup', methods=['POST'])
 def signup():
     data = request.get_json()
