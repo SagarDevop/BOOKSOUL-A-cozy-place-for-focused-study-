@@ -84,80 +84,84 @@ export default function Page4() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-indigo-900 p-6 text-white relative overflow-hidden">
-      <h1 className="text-4xl font-bold text-center mb-10">🎧 Focus Zone</h1>
+   <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-indigo-900 p-4 sm:p-6 text-white relative overflow-hidden">
+      <h1 className="text-3xl sm:text-4xl font-bold text-center mb-10">🎧 Focus Zone</h1>
 
-      {/* Focus Timer */}
-      <motion.div
-        {...floatingAnimation}
-        className="absolute top-24 left-4 md:left-12 w-72 p-6 bg-white/10 backdrop-blur-md rounded-xl shadow-xl"
-      >
-        <h2 className="text-xl font-semibold mb-2">🎯 Focus Timer</h2>
-        <div className="flex items-center space-x-2 mb-4">
-          <input
-            type="number"
-            min="0"
-            placeholder="Min"
-            value={minutes}
-            disabled={running}
-            onChange={(e) => setMinutes(parseInt(e.target.value || "0"))}
-            className="w-20 text-center px-2 py-1 bg-white/20 rounded"
-          />
-          <span>:</span>
-          <input
-            type="number"
-            min="0"
-            max="59"
-            placeholder="Sec"
-            value={seconds}
-            disabled={running}
-            onChange={(e) => setSeconds(parseInt(e.target.value || "0"))}
-            className="w-20 text-center px-2 py-1 bg-white/20 rounded"
-          />
-        </div>
-        <div className="text-3xl font-bold mb-4">
-          {String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}
-        </div>
-        <button
-          onClick={startTimer}
-          disabled={running}
-          className="bg-green-500 px-4 py-2 rounded hover:bg-green-600 transition"
-        >
-          ▶ Start
-        </button>
-        <button
-          onClick={resetTimer}
-          className="ml-4 bg-red-500 px-4 py-2 rounded hover:bg-red-600 transition"
-        >
-          🔁 Reset
-        </button>
-      </motion.div>
+      {/* Main content wrapper */}
+      <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-10">
 
-      {/* Ambience */}
-      <motion.div
-        {...floatingAnimation}
-        transition={{ ...floatingAnimation.transition, delay: 1 }}
-        className="absolute top-32 right-4 md:right-12 w-72 p-6 bg-white/10 backdrop-blur-md rounded-xl shadow-xl"
-      >
-        <h2 className="text-xl font-semibold mb-4">🔊 Study Ambience</h2>
-        <button
-          onClick={handleAmbiencePlay}
-          className="bg-blue-500 px-4 py-2 rounded hover:bg-blue-600 transition"
+        {/* Focus Timer */}
+        <motion.div
+          {...floatingAnimation}
+          className="w-full sm:w-80 p-6 bg-white/10 backdrop-blur-md rounded-xl shadow-xl"
         >
-          🎵 Play Ambience
-        </button>
-        {selectedSound && (
-          <div className="mt-2 text-sm text-gray-300">
-            Now playing: <strong>{selectedSound}</strong>
+          <h2 className="text-xl font-semibold mb-2">🎯 Focus Timer</h2>
+          <div className="flex items-center space-x-2 mb-4">
+            <input
+              type="number"
+              min="0"
+              placeholder="Min"
+              value={minutes}
+              disabled={running}
+              onChange={(e) => setMinutes(parseInt(e.target.value || "0"))}
+              className="w-20 text-center px-2 py-1 bg-white/20 rounded"
+            />
+            <span>:</span>
+            <input
+              type="number"
+              min="0"
+              max="59"
+              placeholder="Sec"
+              value={seconds}
+              disabled={running}
+              onChange={(e) => setSeconds(parseInt(e.target.value || "0"))}
+              className="w-20 text-center px-2 py-1 bg-white/20 rounded"
+            />
           </div>
-        )}
-      </motion.div>
+          <div className="text-3xl font-bold mb-4">
+            {String(minutes).padStart(2, "0")}:{String(seconds).padStart(2, "0")}
+          </div>
+          <button
+            onClick={startTimer}
+            disabled={running}
+            className="bg-green-500 px-4 py-2 rounded hover:bg-green-600 transition"
+          >
+            ▶ Start
+          </button>
+          <button
+            onClick={resetTimer}
+            className="ml-4 bg-red-500 px-4 py-2 rounded hover:bg-red-600 transition"
+          >
+            🔁 Reset
+          </button>
+        </motion.div>
 
-      {/* Feedback */}
+        {/* Ambience */}
+        <motion.div
+          {...floatingAnimation}
+          transition={{ ...floatingAnimation.transition, delay: 1 }}
+          className="w-full sm:w-80 p-6 bg-white/10 backdrop-blur-md rounded-xl shadow-xl"
+        >
+          <h2 className="text-xl font-semibold mb-4">🔊 Study Ambience</h2>
+          <button
+            onClick={handleAmbiencePlay}
+            className="bg-blue-500 px-4 py-2 rounded hover:bg-blue-600 transition"
+          >
+            🎵 Play Ambience
+          </button>
+          {selectedSound && (
+            <div className="mt-2 text-sm text-gray-300">
+              Now playing: <strong>{selectedSound}</strong>
+            </div>
+          )}
+        </motion.div>
+      </div>
+
+      {/* Feedback Section */}
       <motion.div
         {...floatingAnimation}
         transition={{ ...floatingAnimation.transition, delay: 2 }}
-        className="absolute bottom-20 left-1/2 transform -translate-x-1/2 w-80 p-6 bg-white/10 backdrop-blur-md rounded-xl shadow-xl"
+        className="mt-10 mx-auto max-w-md w-full p-6 bg-white/10 backdrop-blur-md rounded-xl shadow-xl"
       >
         <h2 className="text-xl font-semibold mb-2">💬 Feedback & Suggestions</h2>
         <textarea
@@ -174,8 +178,8 @@ export default function Page4() {
 
       {/* Modal for Sound Options */}
       {ambienceOpen && (
-        <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-          <div className="bg-white text-black p-6 rounded-lg w-80">
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+          <div className="bg-white text-black p-6 rounded-lg w-11/12 max-w-sm">
             <h3 className="text-xl font-semibold mb-4">🎼 Choose Ambience</h3>
             <ul className="space-y-2">
               {ambientOptions.map((opt) => (
@@ -198,7 +202,6 @@ export default function Page4() {
           </div>
         </div>
       )}
-      
     </div>
   );
 }
