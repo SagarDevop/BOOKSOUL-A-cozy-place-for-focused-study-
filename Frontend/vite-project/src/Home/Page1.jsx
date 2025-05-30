@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FaLocationDot } from "react-icons/fa6";
+import { Link } from 'react-router-dom';
 
 const Page1 = () => {
   return (
@@ -47,18 +48,16 @@ const Page1 = () => {
               Ganga Vatika, Arogyadham <br />
               Main Road, Chitrakoot M.P. <br />
             </p>
-            
-            <motion.a
-              href="/about"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
-              className="inline-block bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-3 px-6 rounded-xl transition duration-300"
-            >
-              Learn More
-            </motion.a>
-          </motion.div>
 
-        
+            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+              <Link
+                to="/about"
+                className="inline-block bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-3 px-6 rounded-xl transition duration-300"
+              >
+                Learn More
+              </Link>
+            </motion.div>
+          </motion.div>
 
         </div>
       </div>
