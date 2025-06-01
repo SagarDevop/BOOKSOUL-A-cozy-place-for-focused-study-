@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import FeaturesWithHoverImage from './FeaturesWithHoverImage';
+import Navbar from './Navbar';
 
 
 const features = [
@@ -43,6 +44,7 @@ const AboutSection = () => {
   return (
     
     <>
+    <Navbar />
     
     <section
       id="about"

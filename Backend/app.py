@@ -5,6 +5,9 @@ from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from dotenv import load_dotenv
 import os
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 # Load environment variables from .env file
 load_dotenv()
@@ -86,6 +89,10 @@ def get_booked_seats():
 
 
 # 👇 Book seats
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
 @app.route('/book-seats', methods=['POST'])
 def book_seats():
     try:
@@ -113,11 +120,43 @@ def book_seats():
                 'booked_by': email
             })
 
-        return jsonify({'message': 'Seats booked successfully!'}), 200
+        # Send booking confirmation email
+        send_booking_email(email, seats)
+
+        return jsonify({'message': 'Seats booked successfully and confirmation email sent!'}), 200
 
     except Exception as e:
         print(f"Error in /book-seats: {e}")
         return jsonify({'error': 'Server error'}), 500
+
+
+def send_booking_email(to_email, seats):
+    try:
+        # Email config
+        sender_email = "yourgmail@gmail.com"
+        sender_password = "your_app_password"  # Use App Password if 2FA is enabled
+        subject = "Your Seat Booking Confirmation"
+        seat_list = ', '.join(seats)
+
+        message = MIMEMultipart()
+        message['From'] = sender_email
+        message['To'] = to_email
+        message['Subject'] = subject
+
+        body = f"Hello,\n\nYour seat(s) have been successfully booked.\n\nSeats: {seat_list}\n\nThank you!"
+        message.attach(MIMEText(body, 'plain'))
+
+        # Gmail SMTP setup
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(sender_email, sender_password)
+        server.send_message(message)
+        server.quit()
+
+        print(f"Booking email sent to {to_email}")
+
+    except Exception as e:
+        print(f"Error sending email: {e}")
 
 
     
