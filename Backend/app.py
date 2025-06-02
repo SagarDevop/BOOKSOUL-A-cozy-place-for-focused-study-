@@ -8,6 +8,7 @@ import os
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+import datetime
 
 # Load environment variables from .env file
 load_dotenv()
@@ -132,32 +133,70 @@ def book_seats():
 
 def send_booking_email(to_email, seats):
     try:
-        # Email config
-        sender_email = "yourgmail@gmail.com"
-        sender_password = "your_app_password"  # Use App Password if 2FA is enabled
-        subject = "Your Seat Booking Confirmation"
-        seat_list = ', '.join(seats)
+        # Email configuration
+        sender_email = "Sagar.singh44818@gmail.com"
+        sender_password = "wjyv znpq ondf qlky"  # Use App Password, not your main Gmail password
+        subject = "🎟️ Your Seat Booking Confirmation"
 
-        message = MIMEMultipart()
-        message['From'] = sender_email
+        seat_list = ', '.join(seats)
+        booking_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+        # Create message container
+        message = MIMEMultipart('alternative')
+        message['From'] = f"StudySpace Booking <{sender_email}>"
         message['To'] = to_email
         message['Subject'] = subject
+        message['Date'] = datetime.datetime.now().strftime('%a, %d %b %Y %H:%M:%S')
+        message['Reply-To'] = sender_email
 
-        body = f"Hello,\n\nYour seat(s) have been successfully booked.\n\nSeats: {seat_list}\n\nThank you!"
-        message.attach(MIMEText(body, 'plain'))
+        # Plain text fallback
+        text = f"""\
+Hello {to_email},
 
-        # Gmail SMTP setup
+Your seat booking is confirmed.
+
+Seats Booked: {seat_list}
+Booking Date & Time: {booking_time}
+
+If you did not make this booking, please contact us immediately.
+
+Thanks,
+StudySpace Booking Team
+"""
+
+        # HTML content
+        html = f"""\
+<html>
+  <body style="font-family: Arial, sans-serif; line-height: 1.6;">
+    <h2>🎉 Seat Booking Confirmation</h2>
+    <p>Hello {to_email},</p>
+    <p>We're happy to confirm your seat booking.</p>
+    <ul>
+      <li><strong>Seats Booked:</strong> {seat_list}</li>
+      <li><strong>Booking Time:</strong> {booking_time}</li>
+    </ul>
+    <p>If you didn’t make this booking, please contact us immediately.</p>
+    <p>Thank you for using our service!</p>
+    <p><strong>– StudySpace Booking Team</strong></p>
+  </body>
+</html>
+"""
+
+        # Attach both versions
+        message.attach(MIMEText(text, 'plain'))
+        message.attach(MIMEText(html, 'html'))
+
+        # Send email via Gmail SMTP
         server = smtplib.SMTP('smtp.gmail.com', 587)
         server.starttls()
         server.login(sender_email, sender_password)
         server.send_message(message)
         server.quit()
 
-        print(f"Booking email sent to {to_email}")
+        print(f"Booking confirmation email sent to: {to_email}")
 
     except Exception as e:
         print(f"Error sending email: {e}")
-
 
     
 @app.route('/contact', methods=['POST'])
