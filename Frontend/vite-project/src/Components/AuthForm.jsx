@@ -94,7 +94,7 @@ const AuthForm = () => {
 
     } catch (err) {
       console.error(err);
-      toast.error("Unexpected error!");
+      toast.error("Unexpected error!",err);
     } finally {
       setLoading(false);
     }
