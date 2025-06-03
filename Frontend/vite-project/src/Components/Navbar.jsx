@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion, useAnimation } from 'framer-motion';
-import { Home, Info, Phone, User, Menu, X } from 'lucide-react';
+import { Home, Info, Phone, User, Menu, CalendarCheck, X } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 
@@ -95,6 +95,7 @@ function Navbar() {
           ) : (
             <AnimatedLink to="/login" icon={<User size={18} />} label="Account" delay={0.4} />
           )}
+          
         </div>
 
         {/* Mobile Menu */}

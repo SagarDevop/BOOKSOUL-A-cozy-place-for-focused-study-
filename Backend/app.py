@@ -9,6 +9,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import datetime
+import random
 
 # Load environment variables from .env file
 load_dotenv()
@@ -43,6 +44,49 @@ users_collection = db['users']  # 🔥 your collection name
 contact_collection = db['contact']  # 🔥 your collection name
 seat_booking_collection = db['seatBookings'] 
 
+# In-memory store for OTPs (in production, use Redis or database with expiry)
+otp_store = {}
+
+def generate_otp():
+    return str(random.randint(100000, 999999))
+
+def send_otp_email(to_email, otp):
+    try:
+        sender_email = "Sagar.singh44818@gmail.com"
+        sender_password = "wjyv znpq ondf qlky"  # App password
+
+        subject = "🔐 Your OTP for Password Reset"
+        text = f"Your OTP for resetting your password is: {otp}\nIt is valid for 5 minutes."
+        html = f"""
+        <html>
+        <body>
+            <p>Hi,</p>
+            <p>Your OTP for resetting your password is:</p>
+            <h2>{otp}</h2>
+            <p>This OTP is valid for 5 minutes. Do not share it with anyone.</p>
+        </body>
+        </html>
+        """
+
+        message = MIMEMultipart("alternative")
+        message["From"] = f"BookSoul <{sender_email}>"
+        message["To"] = to_email
+        message["Subject"] = subject
+        message.attach(MIMEText(text, "plain"))
+        message.attach(MIMEText(html, "html"))
+
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.starttls()
+        server.login(sender_email, sender_password)
+        server.send_message(message)
+        server.quit()
+        print(f"OTP sent to {to_email}")
+
+    except Exception as e:
+        print(f"Error sending OTP: {e}")
+
+
+
 @app.route('/')
 def home():
     return jsonify({"message": "Welcome to BookSoul API!"})
@@ -75,6 +119,47 @@ def login():
     
 # 👇 Add this under your collection setups
 seat_booking_collection = db['seatBookings']  # 🔥 your new collection
+
+
+@app.route('/send-otp', methods=['POST'])
+def send_otp():
+    data = request.get_json()
+    email = data.get('email')
+
+    user = users_collection.find_one({'email': email})
+    if not user:
+        return jsonify({'error': 'Email not registered'}), 400
+
+    otp = generate_otp()
+    otp_store[email] = {'otp': otp, 'timestamp': datetime.datetime.now()}
+    send_otp_email(email, otp)
+
+    return jsonify({'message': 'OTP sent successfully!'}), 200
+
+
+@app.route('/verify-otp', methods=['POST'])
+def verify_otp():
+    data = request.get_json()
+    email = data.get('email')
+    otp_input = data.get('otp')
+    new_password = data.get('newPassword')
+
+    record = otp_store.get(email)
+    if not record:
+        return jsonify({'error': 'OTP not requested'}), 400
+
+    time_diff = (datetime.datetime.now() - record['timestamp']).seconds
+    if time_diff > 300:
+        return jsonify({'error': 'OTP expired'}), 400
+
+    if record['otp'] != otp_input:
+        return jsonify({'error': 'Invalid OTP'}), 400
+
+    users_collection.update_one({'email': email}, {'$set': {'password': new_password}})
+    del otp_store[email]  # Remove OTP after use
+
+    return jsonify({'message': 'Password updated successfully'}), 200
+
 
 # 👇 Get all booked seats
 @app.route('/booked-seats', methods=['GET'])
@@ -197,6 +282,8 @@ StudySpace Booking Team
 
     except Exception as e:
         print(f"Error sending email: {e}")
+
+#
 
     
 @app.route('/contact', methods=['POST'])
