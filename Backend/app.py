@@ -121,7 +121,7 @@ def login():
 seat_booking_collection = db['seatBookings']  # 🔥 your new collection
 
 
-@app.route('/send-otp', methods=['POST'])
+@app.route('/request-reset', methods=['POST'])
 def send_otp():
     data = request.get_json()
     email = data.get('email')
