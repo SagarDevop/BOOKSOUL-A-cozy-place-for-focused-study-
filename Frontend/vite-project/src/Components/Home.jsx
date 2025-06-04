@@ -10,7 +10,7 @@ function Home() {
   return (
    <>
    
-  <Navbar/>
+ 
   <HomeContent/>
   <AboutSection/>
   <ContactUs/>

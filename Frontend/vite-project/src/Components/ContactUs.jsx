@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { FaWhatsapp } from "react-icons/fa";
 import { toast } from "react-hot-toast"; 
-import Navbar from "./Navbar";
+
 
 export default function ContactUs() {
   const whatsappNumber = "918756754080";
@@ -60,7 +60,7 @@ export default function ContactUs() {
 
   return (
     <>
-    <Navbar />
+    
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 p-8 text-white relative overflow-hidden">
       <h1 className="text-4xl font-bold text-center mb-10">📬 Contact Us</h1>
 
