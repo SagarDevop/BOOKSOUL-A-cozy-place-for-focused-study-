@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { motion, useAnimation } from 'framer-motion';
-import { Home, Info, Phone, User, Menu, CalendarCheck, X } from 'lucide-react';
+import { Home, Info, Phone, User, Menu, X } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-
 import AccountModal from './AccountModal';
 
 function Navbar() {
@@ -14,11 +13,20 @@ function Navbar() {
   const [showAccountModal, setShowAccountModal] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  // ✅ Sync user state with localStorage when "userChanged" event is triggered
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
+    const updateUser = () => {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      } else {
+        setUser(null);
+      }
+    };
+
+    updateUser(); // On component mount
+    window.addEventListener("userChanged", updateUser); // On custom login/logout event
+    return () => window.removeEventListener("userChanged", updateUser);
   }, []);
 
   useEffect(() => {
@@ -40,9 +48,9 @@ function Navbar() {
 
   const handleLogout = () => {
     localStorage.removeItem('user');
-    setUser(null);
-    toast.success('Logged out successfully!');
-    navigate('/login');
+    window.dispatchEvent(new Event("userChanged")); // ✅ Dispatch logout event
+    toast.error('Logged out successfully!');
+    navigate('/');
   };
 
   return (
@@ -70,7 +78,6 @@ function Navbar() {
             </motion.h1>
           </div>
 
-          {/* Hamburger Toggle */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="md:hidden text-white"
@@ -79,7 +86,7 @@ function Navbar() {
           </button>
         </div>
 
-        {/* Navigation Links (Desktop) */}
+        {/* Desktop Links */}
         <div className="hidden md:flex gap-10 items-center">
           <AnimatedLink to="/" icon={<Home size={18} />} label="Home" delay={0.1} />
           <AnimatedLink to="/about" icon={<Info size={18} />} label="About" delay={0.2} />
@@ -95,59 +102,57 @@ function Navbar() {
           ) : (
             <AnimatedLink to="/login" icon={<User size={18} />} label="Account" delay={0.4} />
           )}
-          
         </div>
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-  <div className="fixed top-0 left-0 w-[40%] h-[27vh] bg-purple-700 text-white p-6 flex flex-col gap-6 z-50 transition-all duration-300 md:hidden">
-    <AnimatedLink
-      to="/"
-      icon={<Home size={20} />}
-      label="Home"
-      delay={0.1}
-      onClick={() => setIsMobileMenuOpen(false)}
-    />
-    <AnimatedLink
-      to="/about"
-      icon={<Info size={20} />}
-      label="About"
-      delay={0.2}
-      onClick={() => setIsMobileMenuOpen(false)}
-    />
-    <AnimatedLink
-      to="/contact"
-      icon={<Phone size={20} />}
-      label="Contact"
-      delay={0.3}
-      onClick={() => setIsMobileMenuOpen(false)}
-    />
-    {user ? (
-      <button
-        onClick={() => {
-          setShowAccountModal(true);
-          setIsMobileMenuOpen(false);
-        }}
-        className="flex items-center gap-2 text-green-400 font-semibold text-[4vw] hover:text-green-300 transition duration-300"
-      >
-        <User size={20} />
-        Account
-      </button>
-    ) : (
-      <AnimatedLink
-        to="/login"
-        icon={<User size={20} />}
-        label="Account"
-        delay={0.4}
-        onClick={() => setIsMobileMenuOpen(false)}
-      />
-    )}
-  </div>
-)}
-
+          <div className="fixed top-0 left-0 w-[40%] h-[27vh] bg-purple-700 text-white p-6 flex flex-col gap-6 z-50 transition-all duration-300 md:hidden">
+            <AnimatedLink
+              to="/"
+              icon={<Home size={20} />}
+              label="Home"
+              delay={0.1}
+              onClick={() => setIsMobileMenuOpen(false)}
+            />
+            <AnimatedLink
+              to="/about"
+              icon={<Info size={20} />}
+              label="About"
+              delay={0.2}
+              onClick={() => setIsMobileMenuOpen(false)}
+            />
+            <AnimatedLink
+              to="/contact"
+              icon={<Phone size={20} />}
+              label="Contact"
+              delay={0.3}
+              onClick={() => setIsMobileMenuOpen(false)}
+            />
+            {user ? (
+              <button
+                onClick={() => {
+                  setShowAccountModal(true);
+                  setIsMobileMenuOpen(false);
+                }}
+                className="flex items-center gap-2 text-green-400 font-semibold text-[4vw] hover:text-green-300 transition duration-300"
+              >
+                <User size={20} />
+                Account
+              </button>
+            ) : (
+              <AnimatedLink
+                to="/login"
+                icon={<User size={20} />}
+                label="Account"
+                delay={0.4}
+                onClick={() => setIsMobileMenuOpen(false)}
+              />
+            )}
+          </div>
+        )}
       </motion.nav>
 
-      {/* Account Modal */}
+      {/* Modal */}
       {showAccountModal && (
         <AccountModal
           user={user}
@@ -159,7 +164,6 @@ function Navbar() {
   );
 }
 
-// Animated link component
 function AnimatedLink({ to, icon, label, delay, onClick }) {
   return (
     <Link to={to} onClick={onClick}>

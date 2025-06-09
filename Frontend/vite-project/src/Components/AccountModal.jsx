@@ -1,6 +1,9 @@
-import React from 'react';
-
 function AccountModal({ user, onClose, onLogout }) {
+  if (!user) {
+    // Just close the modal or show a fallback if user is missing
+    return null; // or return a simple message
+  }
+
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
       <div className="bg-white rounded-2xl p-8 shadow-2xl w-[90%] max-w-md relative">

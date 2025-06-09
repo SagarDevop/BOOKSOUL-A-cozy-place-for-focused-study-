@@ -83,6 +83,8 @@ const AuthForm = () => {
           email: data.user?.email || formData.email,
         }));
 
+        window.dispatchEvent(new Event("userChanged"));
+
         toast.success(data.message || "Success!");
         setTimeout(() => navigate("/"), 1500);
       }
