@@ -37,7 +37,7 @@ function Page2() {
         viewport={{ once: true }}
         className="text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600 drop-shadow-lg mb-14"
       >
-        Welcome to Your BOOKSOUL
+        Welcome to Your Chitrakoot Digital Library
       </motion.h1>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl w-full">

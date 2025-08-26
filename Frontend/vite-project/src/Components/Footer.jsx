@@ -45,7 +45,7 @@ export default function Footer() {
         </div>
 
         <p className="text-sm text-gray-900 pt-6">
-          &copy; {new Date().getFullYear()} BOOKSOUL. All rights reserved.
+          &copy; {new Date().getFullYear()} Chitrakoot Digital Library. All rights reserved.
         </p>
       </div>
     </footer>

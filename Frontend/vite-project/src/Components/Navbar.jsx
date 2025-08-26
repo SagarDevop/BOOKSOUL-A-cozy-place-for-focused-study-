@@ -63,7 +63,7 @@ function Navbar() {
         <div className="flex items-center justify-between w-full md:w-auto gap-4 sm:gap-6">
           <div className="flex items-center gap-4 sm:gap-6">
             <motion.img
-              src="/logo (4).png"
+              src="/libicon.jpg"
               alt="Logo"
               className="h-[6vh] w-[12vw] sm:h-[7vh] sm:w-[8vw] md:h-[8vh] md:w-[5vw] object-contain"
               whileHover={{ rotate: 8 }}
@@ -74,7 +74,7 @@ function Navbar() {
                 isScrolled ? 'text-[5vw] sm:text-[2.2vw] md:text-[1.8vw]' : 'text-[6vw] sm:text-[2.5vw] md:text-[2.2vw]'
               }`}
             >
-              BOOKSOUL
+              Chitrakoot Digital Library
             </motion.h1>
           </div>
 

@@ -61,7 +61,7 @@ const AboutSection = () => {
           viewport={{ once: true }}
           className="text-4xl md:text-5xl font-extrabold mb-16"
         >
-          Why Choose <span className="text-yellow-500">BOOKSOUL</span>?
+          Why Choose <span className="text-yellow-500">Chitrakoot Digital Library</span>?
         </motion.h2>
 
         {/* Feature Cards */}
