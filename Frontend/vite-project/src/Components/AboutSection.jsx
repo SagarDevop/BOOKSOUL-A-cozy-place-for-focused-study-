@@ -122,7 +122,7 @@ const AboutSection = () => {
           viewport={{ once: true }}
         >
           <p className="text-lg italic text-gray-700 mb-4">
-            “BOOKSOUL is my go-to spot during exams. Super calm, good coffee, and great Wi-Fi. I actually look forward to studying now.”
+            “Chitrakoot Digital Library is my go-to spot during exams. Super calm, good coffee, and great Wi-Fi. I actually look forward to studying now.”
           </p>
           <p className="text-right text-gray-600 font-semibold">—Shiv , Engineering Student</p>
         </motion.div>
