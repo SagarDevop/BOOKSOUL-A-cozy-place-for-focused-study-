@@ -204,29 +204,32 @@ def get_requests():
         req['_id'] = str(req['_id'])
     return jsonify(requests), 200
 
-@app.route('/admin/requests/<id>', methods=['PUT'])
-def approve_request(id):
+@app.route('/update_booking/<id>', methods=['POST'])
+def update_booking(id):
     data = request.get_json()
-    new_status = data.get('status')
+    action = data.get('action')  # "approve" or "reject"
 
-    if new_status not in ['approved', 'rejected']:
-        return jsonify({'error': 'Invalid status'}), 400
+    if action not in ['approve', 'reject']:
+        return jsonify({'success': False, 'message': 'Invalid action'}), 400
 
-    # Update request status
-    result = db.booking_requests.update_one(
-        {'_id': ObjectId(id)},
-        {'$set': {'status': new_status}}
-    )
+    # Find the pending booking request
+    booking_request = db.booking_requests.find_one({'_id': ObjectId(id)})
+    if not booking_request:
+        return jsonify({'success': False, 'message': 'Request not found'}), 404
 
-    if result.matched_count == 0:
-        return jsonify({'error': 'Request not found'}), 404
+    if action == 'approve':
+        # Insert into booked seats collection
+        seat_booking_collection = db['seatBookings']
+        seat_booking_collection.insert_one({
+            'email': booking_request['email'],
+            'seats': booking_request['seats'],
+            'status': 'booked'
+        })
 
-    # Fetch updated request
-    updated_req = db.booking_requests.find_one({'_id': ObjectId(id)})
-    updated_req['_id'] = str(updated_req['_id'])
+    # Remove from pending requests regardless of action
+    db.booking_requests.delete_one({'_id': ObjectId(id)})
 
-    return jsonify({'message': 'Request updated', 'request': updated_req}), 200
-
+    return jsonify({'success': True, 'message': f'Request {action}d successfully'}), 200
 
 
 

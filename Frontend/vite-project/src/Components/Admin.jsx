@@ -3,14 +3,15 @@ import React, { useEffect, useState } from "react";
 const Admin = () => {
   const [requests, setRequests] = useState([]);
 
-  // ✅ Fetch all booking requests
   useEffect(() => {
     fetchRequests();
   }, []);
 
   const fetchRequests = async () => {
     try {
-      const res = await fetch("https://booksoul-a-cozy-place-for-focused-study.onrender.com/admin/requests");
+      const res = await fetch(
+        "https://booksoul-a-cozy-place-for-focused-study.onrender.com/admin/requests"
+      );
       const data = await res.json();
       setRequests(data);
     } catch (error) {
@@ -18,23 +19,34 @@ const Admin = () => {
     }
   };
 
-  // ✅ Approve/Reject a request
-  const updateStatus = async (id, status) => {
+  // ✅ Approve or Reject a request
+  const handleAction = async (id, action) => {
     try {
-      await fetch(`https://booksoul-a-cozy-place-for-focused-study.onrender.com/admin/requests/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status }),
-      });
-      fetchRequests(); // refresh list
+      const res = await fetch(
+        `https://booksoul-a-cozy-place-for-focused-study.onrender.com/update_booking/${id}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action }), // "approve" or "reject"
+        }
+      );
+      const result = await res.json();
+      if (result.success) {
+        // remove it from local state so it vanishes from pending list
+        setRequests((prev) => prev.filter((r) => r._id !== id));
+      } else {
+        alert(result.message);
+      }
     } catch (error) {
-      console.error("Error updating request", error);
+      console.error("Error updating booking", error);
     }
   };
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">📌 Admin Panel - Booking Requests</h1>
+      <h1 className="text-2xl font-bold mb-4">
+        📌 Admin Panel - Booking Requests
+      </h1>
 
       {requests.length === 0 ? (
         <p>No booking requests yet.</p>
@@ -56,13 +68,13 @@ const Admin = () => {
                 <td className="border px-4 py-2">{req.status}</td>
                 <td className="border px-4 py-2 space-x-2">
                   <button
-                    onClick={() => updateStatus(req._id, "approved")}
+                    onClick={() => handleAction(req._id, "approve")}
                     className="bg-green-500 text-white px-3 py-1 rounded"
                   >
                     Approve
                   </button>
                   <button
-                    onClick={() => updateStatus(req._id, "rejected")}
+                    onClick={() => handleAction(req._id, "reject")}
                     className="bg-red-500 text-white px-3 py-1 rounded"
                   >
                     Reject
