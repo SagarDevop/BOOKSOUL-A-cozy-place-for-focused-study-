@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { motion, useAnimation } from 'framer-motion';
-import { Home, Info, Phone, User, Menu, X } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
-import { toast } from 'react-hot-toast';
-import AccountModal from './AccountModal';
+import React, { useEffect, useState } from "react";
+import { motion, useAnimation } from "framer-motion";
+import { Home, Info, Phone, User, Menu, X } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
+import AccountModal from "./AccountModal";
 
 function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -33,24 +33,24 @@ function Navbar() {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 30);
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => {
     controls.start({
-      height: isScrolled ? '9vh' : '13vh',
-      paddingTop: isScrolled ? '0.5rem' : '1rem',
-      paddingBottom: isScrolled ? '0.5rem' : '1rem',
-      transition: { duration: 0.3, ease: 'easeInOut' },
+      height: isScrolled ? "9vh" : "13vh",
+      paddingTop: isScrolled ? "0.5rem" : "1rem",
+      paddingBottom: isScrolled ? "0.5rem" : "1rem",
+      transition: { duration: 0.3, ease: "easeInOut" },
     });
   }, [isScrolled, controls]);
 
   const handleLogout = () => {
-    localStorage.removeItem('user');
+    localStorage.removeItem("user");
     window.dispatchEvent(new Event("userChanged")); // ✅ Dispatch logout event
-    toast.error('Logged out successfully!');
-    navigate('/');
+    toast.error("Logged out successfully!");
+    navigate("/");
   };
 
   return (
@@ -67,11 +67,13 @@ function Navbar() {
               alt="Logo"
               className="h-[6vh] w-[12vw] sm:h-[7vh] sm:w-[8vw] md:h-[8vh] md:w-[5vw] object-contain"
               whileHover={{ rotate: 8 }}
-              transition={{ type: 'spring', stiffness: 100 }}
+              transition={{ type: "spring", stiffness: 100 }}
             />
             <motion.h1
               className={`text-white font-bold tracking-wider transition-all duration-300 ${
-                isScrolled ? 'text-[5vw] sm:text-[2.2vw] md:text-[1.8vw]' : 'text-[6vw] sm:text-[2.5vw] md:text-[2.2vw]'
+                isScrolled
+                  ? "text-[5vw] sm:text-[2.2vw] md:text-[1.8vw]"
+                  : "text-[6vw] sm:text-[2.5vw] md:text-[2.2vw]"
               }`}
             >
               Chitrakoot Digital Library
@@ -88,9 +90,33 @@ function Navbar() {
 
         {/* Desktop Links */}
         <div className="hidden md:flex gap-10 items-center">
-          <AnimatedLink to="/" icon={<Home size={18} />} label="Home" delay={0.1} />
-          <AnimatedLink to="/about" icon={<Info size={18} />} label="About" delay={0.2} />
-          <AnimatedLink to="/contact" icon={<Phone size={18} />} label="Contact" delay={0.3} />
+          <AnimatedLink
+            to="/"
+            icon={<Home size={18} />}
+            label="Home"
+            delay={0.1}
+          />
+          <AnimatedLink
+            to="/about"
+            icon={<Info size={18} />}
+            label="About"
+            delay={0.2}
+          />
+          <AnimatedLink
+            to="/contact"
+            icon={<Phone size={18} />}
+            label="Contact"
+            delay={0.3}
+          />
+          {user?.role === "admin" && (
+            <AnimatedLink
+              to="/admin"
+              icon={<User size={18} />}
+              label="Admin"
+              delay={0.35}
+            />
+          )}
+
           {user ? (
             <button
               onClick={() => setShowAccountModal(true)}
@@ -100,7 +126,12 @@ function Navbar() {
               Account
             </button>
           ) : (
-            <AnimatedLink to="/login" icon={<User size={18} />} label="Account" delay={0.4} />
+            <AnimatedLink
+              to="/login"
+              icon={<User size={18} />}
+              label="Account"
+              delay={0.4}
+            />
           )}
         </div>
 
@@ -170,18 +201,16 @@ function AnimatedLink({ to, icon, label, delay, onClick }) {
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay, duration: 0.5, ease: 'easeOut' }}
+        transition={{ delay, duration: 0.5, ease: "easeOut" }}
         whileHover={{
           scale: 1.1,
-          color: '#facc15',
+          color: "#facc15",
         }}
         className="flex items-center gap-2 text-white text-[4vw] sm:text-[2.5vw] md:text-[1.15vw] font-medium relative group"
       >
         {icon}
         <span className="relative z-10">{label}</span>
-        <motion.span
-          className="absolute left-0 -bottom-1 h-[2px] bg-yellow-400 w-0 group-hover:w-full origin-left transition-all duration-300"
-        />
+        <motion.span className="absolute left-0 -bottom-1 h-[2px] bg-yellow-400 w-0 group-hover:w-full origin-left transition-all duration-300" />
       </motion.div>
     </Link>
   );

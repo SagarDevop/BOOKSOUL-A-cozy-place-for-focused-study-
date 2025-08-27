@@ -50,6 +50,7 @@ users_collection.insert_one({
 contact_collection = db['contact']  # 🔥 your collection name
 seat_booking_collection = db['seatBookings'] 
 
+
 # In-memory store for OTPs (in production, use Redis or database with expiry)
 otp_store = {}
 
@@ -124,7 +125,7 @@ def login():
         return jsonify({'error': 'Invalid email or password'}), 401
     
 # 👇 Add this under your collection setups
-seat_booking_collection = db['seatBookings']  # 🔥 your new collection
+
 
 
 @app.route('/request-reset', methods=['POST'])
@@ -165,6 +166,34 @@ def verify_otp():
     del otp_store[email]  # Remove OTP after use
 
     return jsonify({'message': 'Password updated successfully'}), 200
+
+@app.route('/request-booking', methods=['POST'])
+def request_booking():
+    data = request.get_json()
+    email = data.get('email')
+    seats = data.get('seats')
+    
+    if not email or not seats:
+        return jsonify({'error': 'Email and seats are required'}), 400
+
+    booking_request = {
+        'email': email,
+        'seats': seats,
+        'status': 'pending'  # 👈 all requests start as pending
+    }
+
+    db.booking_requests.insert_one(booking_request)
+
+    return jsonify({'message': 'Booking request submitted!', 'request': booking_request}), 200
+
+@app.route('/admin/requests', methods=['GET'])
+def get_requests():
+    requests = list(db.booking_requests.find({}))
+    for r in requests:
+        r['_id'] = str(r['_id'])  # Convert ObjectId → string
+    return jsonify(requests)
+
+
 
 
 # 👇 Get all booked seats

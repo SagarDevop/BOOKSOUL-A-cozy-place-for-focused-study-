@@ -10,6 +10,7 @@ import AuthForm from './Components/AuthForm'
 import { Toaster } from 'react-hot-toast';
 import { motion } from 'framer-motion';
 import ConfirmBooking from './Components/ConfirmBooking'
+import Admin from './Components/Admin'
 
 function App() {
   
@@ -63,6 +64,7 @@ function App() {
         <Route path="/contact" element={<ContactUs />} />
         <Route path="/login" element={<AuthForm/>} />
         <Route path="/confirm-booking" element={<ConfirmBooking />} />
+        <Route path="/admin" element={<Admin />} />
         
         
       </Routes>
