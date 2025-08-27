@@ -224,9 +224,13 @@ def update_booking(id):
             'seats': booking_request['seats'],
             'status': 'booked'
         })
+        send_booking_email(booking_request['email'], booking_request['seats'], status="approved")
+    elif action == 'reject':
+        send_booking_email(booking_request['email'], booking_request['seats'], status="rejected")
 
     # Remove from pending requests regardless of action
     db.booking_requests.delete_one({'_id': ObjectId(id)})
+    
 
     return jsonify({'success': True, 'message': f'Request {action}d successfully'}), 200
 
@@ -250,58 +254,72 @@ def get_booked_seats():
         return jsonify({'error': 'Server error'}), 500
 
 
-
-# 👇 Book seats
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-
-@app.route('/book-seats', methods=['POST'])
-def book_seats():
+def send_booking_email(to_email, seats, status="approved"):
     try:
-        data = request.get_json()
-        email = data.get('email')
-        seats = data.get('seats')
-
-        if not email or not seats:
-            return jsonify({'error': 'Missing email or seats'}), 400
-
-        print(f"Booking request from {email} for seats: {seats}")
-
-        user = users_collection.find_one({'email': email})
-        if not user:
-            return jsonify({'error': 'User not found. Please login first.'}), 401
-
-        # Check for already booked seats
-        for seat in seats:
-            if db['booked_seats'].find_one({'seat_id': seat}):
-                return jsonify({'error': f'Seat {seat} is already booked'}), 400
-
-        for seat in seats:
-            db['booked_seats'].insert_one({
-                'seat_id': seat,
-                'booked_by': email
-            })
-
-        # Send booking confirmation email
-        send_booking_email(email, seats)
-
-        return jsonify({'message': 'Seats booked successfully and confirmation email sent!'}), 200
-
-    except Exception as e:
-        print(f"Error in /book-seats: {e}")
-        return jsonify({'error': 'Server error'}), 500
-
-
-def send_booking_email(to_email, seats):
-    try:
-        # Email configuration
         sender_email = "Sagar.singh44818@gmail.com"
-        sender_password = "wjyv znpq ondf qlky"  # Use App Password, not your main Gmail password
-        subject = "🎟️ Your Seat Booking Confirmation"
+        sender_password = "wjyv znpq ondf qlky"  # Use App Password
 
-        seat_list = ', '.join(seats)
-        booking_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        # Subject and messages based on status
+        if status == "approved":
+            subject = "🎟️ Your Seat Booking is Approved!"
+            text_msg = f"""Hello {to_email},
+
+Your seat booking has been approved.
+
+Seats Booked: {', '.join(seats)}
+Booking Date & Time: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+
+Enjoy your study time! If you did not make this booking, contact us immediately.
+
+Thanks,
+StudySpace Booking Team
+"""
+            html_msg = f"""
+<html>
+  <body style="font-family: Arial, sans-serif; line-height: 1.6;">
+    <h2>🎉 Booking Approved!</h2>
+    <p>Hello {to_email},</p>
+    <p>Your seat booking has been approved.</p>
+    <ul>
+      <li><strong>Seats Booked:</strong> {', '.join(seats)}</li>
+      <li><strong>Booking Time:</strong> {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</li>
+    </ul>
+    <p>Enjoy your study time! If you didn’t make this booking, contact us immediately.</p>
+    <p><strong>– StudySpace Booking Team</strong></p>
+  </body>
+</html>
+"""
+        elif status == "rejected":
+            subject = "❌ Your Seat Booking was Rejected"
+            text_msg = f"""Hello {to_email},
+
+Unfortunately, your seat booking has been rejected by the admin.
+
+Seats Requested: {', '.join(seats)}
+Booking Date & Time: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+
+You may try booking different seats or contact us for assistance.
+
+Thanks,
+StudySpace Booking Team
+"""
+            html_msg = f"""
+<html>
+  <body style="font-family: Arial, sans-serif; line-height: 1.6;">
+    <h2>❌ Booking Rejected</h2>
+    <p>Hello {to_email},</p>
+    <p>Unfortunately, your seat booking has been rejected by the admin.</p>
+    <ul>
+      <li><strong>Seats Requested:</strong> {', '.join(seats)}</li>
+      <li><strong>Booking Time:</strong> {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</li>
+    </ul>
+    <p>You may try booking different seats or contact us for assistance.</p>
+    <p><strong>– StudySpace Booking Team</strong></p>
+  </body>
+</html>
+"""
+        else:
+            raise ValueError("Invalid status for email")
 
         # Create message container
         message = MIMEMultipart('alternative')
@@ -311,56 +329,21 @@ def send_booking_email(to_email, seats):
         message['Date'] = datetime.datetime.now().strftime('%a, %d %b %Y %H:%M:%S')
         message['Reply-To'] = sender_email
 
-        # Plain text fallback
-        text = f"""\
-Hello {to_email},
+        # Attach both plain text and HTML
+        message.attach(MIMEText(text_msg, 'plain'))
+        message.attach(MIMEText(html_msg, 'html'))
 
-Your seat booking is confirmed.
-
-Seats Booked: {seat_list}
-Booking Date & Time: {booking_time}
-
-If you did not make this booking, please contact us immediately.
-
-Thanks,
-StudySpace Booking Team
-"""
-
-        # HTML content
-        html = f"""\
-<html>
-  <body style="font-family: Arial, sans-serif; line-height: 1.6;">
-    <h2>🎉 Seat Booking Confirmation</h2>
-    <p>Hello {to_email},</p>
-    <p>We're happy to confirm your seat booking.</p>
-    <ul>
-      <li><strong>Seats Booked:</strong> {seat_list}</li>
-      <li><strong>Booking Time:</strong> {booking_time}</li>
-    </ul>
-    <p>If you didn’t make this booking, please contact us immediately.</p>
-    <p>Thank you for using our service!</p>
-    <p><strong>– StudySpace Booking Team</strong></p>
-  </body>
-</html>
-"""
-
-        # Attach both versions
-        message.attach(MIMEText(text, 'plain'))
-        message.attach(MIMEText(html, 'html'))
-
-        # Send email via Gmail SMTP
+        # Send email
         server = smtplib.SMTP('smtp.gmail.com', 587)
         server.starttls()
         server.login(sender_email, sender_password)
         server.send_message(message)
         server.quit()
 
-        print(f"Booking confirmation email sent to: {to_email}")
+        print(f"Booking {status} email sent to: {to_email}")
 
     except Exception as e:
         print(f"Error sending email: {e}")
-
-#
 
     
 @app.route('/contact', methods=['POST'])
