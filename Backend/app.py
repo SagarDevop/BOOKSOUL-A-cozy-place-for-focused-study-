@@ -237,12 +237,18 @@ def update_booking(id):
 def get_booked_seats():
     try:
         seats = db['booked_seats'].find()
-        seat_list = [seat['seat_id'] for seat in seats]
+        seat_list = []
+
+        for seat_doc in seats:
+            if 'seats' in seat_doc:
+                seat_list.extend(seat_doc['seats'])  # 👈 flatten arrays
+
         return jsonify(seat_list), 200
 
     except Exception as e:
         print(f"Error in /booked-seats: {e}")
         return jsonify({'error': 'Server error'}), 500
+
 
 
 # 👇 Book seats
