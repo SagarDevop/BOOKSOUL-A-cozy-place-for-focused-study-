@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 // Blocks with left and right seat counts
 const seatBlocks = [
@@ -11,9 +12,10 @@ const seatBlocks = [
 ];
 
 export default function Page3() {
-  const [bookedSeats, setBookedSeats] = useState(["Block1-L2", "Block2-R5"]);
+  const [bookedSeats, setBookedSeats] = useState([]);
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [animateBlocks, setAnimateBlocks] = useState([]);
+  const navigate = useNavigate();
 
 
 
@@ -42,45 +44,22 @@ export default function Page3() {
     }
   };
 
-  const handleBooking = async () => {
-    if (selectedSeats.length === 0) return;
-  
-    // 🔥 Get email from localStorage or context/state (based on your app)
-   const user = JSON.parse(localStorage.getItem('user'));
-   const email = user?.email;
+  const handleBooking = () => {
+  if (selectedSeats.length === 0) return;
 
-  
-    if (!email) {
-      toast.error("Please log in to book seats.");
-      return;
-    }
-  
-    try {
-      const response = await fetch('https://booksoul-a-cozy-place-for-focused-study.onrender.com/book-seats', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ seats: selectedSeats, email }), // ✅ Include email
-      });
-  
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Seats booked:', data);
-        setBookedSeats([...bookedSeats, ...selectedSeats]);
-        setSelectedSeats([]);
-        toast.success("Seats booked successfully!");
-      } else {
-        const errData = await response.json();
-        console.error('Booking failed:', errData);
-        toast.error(errData.error || "Booking failed. Please log in.");
-      }
-    } catch (error) {
-      console.error('Error booking seats:', error);
-      toast.error("Something went wrong.");
-    }
-  };
-  
+  // 🔥 Check user login from localStorage
+  const user = JSON.parse(localStorage.getItem("user"));
+  const email = user?.email;
+
+  if (!email) {
+    toast.error("Please log in to book seats.");
+    return; // ⛔ stop here if not logged in
+  }
+
+  // ✅ If logged in, navigate to confirmation page
+  navigate("/confirm-booking", { state: { selectedSeats, email } });
+};
+
   
   
 

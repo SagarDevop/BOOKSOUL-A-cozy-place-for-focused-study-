@@ -9,6 +9,7 @@ import ContactUs from './Components/ContactUs'
 import AuthForm from './Components/AuthForm'
 import { Toaster } from 'react-hot-toast';
 import { motion } from 'framer-motion';
+import ConfirmBooking from './Components/ConfirmBooking'
 
 function App() {
   
@@ -61,6 +62,7 @@ function App() {
         <Route path="/about" element={<AboutSection />} />
         <Route path="/contact" element={<ContactUs />} />
         <Route path="/login" element={<AuthForm/>} />
+        <Route path="/confirm-booking" element={<ConfirmBooking />} />
         
         
       </Routes>

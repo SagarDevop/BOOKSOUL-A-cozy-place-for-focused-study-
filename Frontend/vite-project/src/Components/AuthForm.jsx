@@ -78,16 +78,26 @@ const AuthForm = () => {
       }
 
       if (mode === "login" || mode === "signup") {
-        localStorage.setItem("user", JSON.stringify({
-          name: data.user?.name || formData.name,
-          email: data.user?.email || formData.email,
-        }));
+  const userData = {
+    name: data.user?.name || formData.name,
+    email: data.user?.email || formData.email,
+    role: data.user?.role || "user"  // 👈 store role as well
+  };
 
-        window.dispatchEvent(new Event("userChanged"));
+  localStorage.setItem("user", JSON.stringify(userData));
+  window.dispatchEvent(new Event("userChanged"));
 
-        toast.success(data.message || "Success!");
-        setTimeout(() => navigate("/"), 1500);
-      }
+  toast.success(data.message || "Success!");
+
+  setTimeout(() => {
+    if (userData.role === "admin") {
+      navigate("/admin");   // 👈 go to admin dashboard
+    } else {
+      navigate("/");    // 👈 normal user goes home
+    }
+  }, 1500);
+}
+
 
       if (mode === "request-reset") {
         toast.success("OTP sent to your email!");

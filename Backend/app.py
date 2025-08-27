@@ -40,7 +40,13 @@ except Exception as e:
 
 
 db = client['library_web']  # 🔥 your db name
-users_collection = db['users']  # 🔥 your collection name
+users_collection = db['users']# 🔥 your collection name
+users_collection.insert_one({
+    "name": "Super Admin",
+    "email": "admin@example.com",
+    "password": generate_password_hash("Admin@123"),  # hashed password
+    "role": "admin"
+})
 contact_collection = db['contact']  # 🔥 your collection name
 seat_booking_collection = db['seatBookings'] 
 
@@ -101,7 +107,7 @@ def signup():
     if users_collection.find_one({'email': email}):
         return jsonify({'error': 'Email already exists'}), 400
     
-    users_collection.insert_one({'email': email, 'password': password, 'name': name})
+    users_collection.insert_one({'email': email, 'password': password, 'name': name , 'role': 'user'})
     return jsonify({'message': 'User registered successfully!'}), 200
 
 @app.route('/login', methods=['POST'])
@@ -113,7 +119,7 @@ def login():
     user = users_collection.find_one({'email': email})
 
     if user and user['password'] == password:
-        return jsonify({'message': 'Login successful!', 'user': {'name': user['name'], 'email': user['email']}}), 200
+        return jsonify({'message': 'Login successful!', 'user': {'name': user['name'], 'email': user['email'], 'role': user.get('role', 'user')}}), 200
     else:
         return jsonify({'error': 'Invalid email or password'}), 401
     

@@ -3,7 +3,7 @@ import { FaInstagram, FaFacebookF, FaTwitter, FaGithub, FaLinkedin } from "react
 
 const socialIcons = [
   { icon: <FaInstagram />, link: "https://instagram.com" },
-  { icon: <FaFacebookF />, link: "https://facebook.com" },
+  { icon: <FaFacebookF />, link: "https://www.facebook.com/people/chitrakoot-digital-library/61579806216243/?rdid=nWeosuTr35hjRSxE&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F16D64nq1W7%2F" },
   { icon: <FaTwitter />, link: "https://twitter.com" },
  
 ];
