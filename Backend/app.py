@@ -218,9 +218,8 @@ def update_booking(id):
         return jsonify({'success': False, 'message': 'Request not found'}), 404
 
     if action == 'approve':
-        # Insert into booked seats collection
-        seat_booking_collection = db['seatBookings']
-        seat_booking_collection.insert_one({
+        # Insert into the unified booked seats collection
+        db['booked_seats'].insert_one({
             'email': booking_request['email'],
             'seats': booking_request['seats'],
             'status': 'booked'
