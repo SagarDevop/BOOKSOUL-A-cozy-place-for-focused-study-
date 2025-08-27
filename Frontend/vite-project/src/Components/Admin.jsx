@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
 
-const Admin = () => {
+const AdminDashboard = () => {
   const [requests, setRequests] = useState([]);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     fetchRequests();
   }, []);
 
+  // Fetch all booking requests from backend
   const fetchRequests = async () => {
     try {
       const res = await fetch(
@@ -19,7 +22,7 @@ const Admin = () => {
     }
   };
 
-  // ✅ Approve or Reject a request
+  // Handle Approve/Reject
   const handleAction = async (id, action) => {
     try {
       const res = await fetch(
@@ -27,66 +30,157 @@ const Admin = () => {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action }), // "approve" or "reject"
+          body: JSON.stringify({ action }),
         }
       );
       const result = await res.json();
+
       if (result.success) {
-        // remove it from local state so it vanishes from pending list
-        setRequests((prev) => prev.filter((r) => r._id !== id));
+        // ✅ Update the status in local state instead of removing
+        setRequests((prev) =>
+          prev.map((r) =>
+            r._id === id ? { ...r, status: action } : r
+          )
+        );
+
+        toast.success(
+          action === "approve"
+            ? "Booking approved successfully!"
+            : "Booking was rejected!"
+        );
       } else {
-        alert(result.message);
+        toast.error(result.message || "Something went wrong");
       }
     } catch (error) {
       console.error("Error updating booking", error);
+      toast.error("Server error while updating booking");
     }
   };
 
-  return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">
-        📌 Admin Panel - Booking Requests
-      </h1>
+  // Filter requests based on search
+  const filteredRequests = requests.filter(
+    (r) =>
+      r.email.toLowerCase().includes(search.toLowerCase()) ||
+      r.status.toLowerCase().includes(search.toLowerCase())
+  );
 
-      {requests.length === 0 ? (
-        <p>No booking requests yet.</p>
-      ) : (
-        <table className="table-auto border-collapse border border-gray-400 w-full">
-          <thead>
-            <tr className="bg-gray-200">
-              <th className="border px-4 py-2">Email</th>
-              <th className="border px-4 py-2">Seats</th>
-              <th className="border px-4 py-2">Status</th>
-              <th className="border px-4 py-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {requests.map((req) => (
-              <tr key={req._id}>
-                <td className="border px-4 py-2">{req.email}</td>
-                <td className="border px-4 py-2">{req.seats.join(", ")}</td>
-                <td className="border px-4 py-2">{req.status}</td>
-                <td className="border px-4 py-2 space-x-2">
-                  <button
-                    onClick={() => handleAction(req._id, "approve")}
-                    className="bg-green-500 text-white px-3 py-1 rounded"
-                  >
-                    Approve
-                  </button>
-                  <button
-                    onClick={() => handleAction(req._id, "reject")}
-                    className="bg-red-500 text-white px-3 py-1 rounded"
-                  >
-                    Reject
-                  </button>
-                </td>
+  // Analytics counts
+  const approvedCount = requests.filter((r) => r.status === "approve").length;
+  const rejectedCount = requests.filter((r) => r.status === "reject").length;
+  const pendingCount = requests.filter((r) => r.status === "pending").length;
+
+  return (
+    <div className="flex min-h-screen bg-gray-100">
+      {/* Sidebar */}
+      <aside className="w-64 bg-white shadow-lg p-6 flex flex-col">
+        <h2 className="text-2xl font-bold mb-6">Admin Panel</h2>
+        <nav className="flex flex-col space-y-3">
+          <a href="#" className="text-gray-700 hover:text-blue-600">Dashboard</a>
+          <a href="#" className="text-gray-700 hover:text-blue-600">Booking Requests</a>
+          <a href="#" className="text-gray-700 hover:text-blue-600">Analytics</a>
+          <a href="#" className="text-gray-700 hover:text-blue-600">Settings</a>
+        </nav>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 p-8">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-800">👋 Welcome, Admin!</h1>
+            <p className="text-gray-600">Manage your bookings efficiently.</p>
+          </div>
+        </div>
+
+        {/* Analytics Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-6 mb-6">
+          <div className="bg-white p-4 rounded-lg shadow text-center">
+            <p className="text-gray-500">Total Requests</p>
+            <p className="text-2xl font-bold">{requests.length}</p>
+          </div>
+          <div className="bg-green-100 p-4 rounded-lg shadow text-center">
+            <p className="text-green-700">Approved</p>
+            <p className="text-2xl font-bold">{approvedCount}</p>
+          </div>
+          <div className="bg-red-100 p-4 rounded-lg shadow text-center">
+            <p className="text-red-700">Rejected</p>
+            <p className="text-2xl font-bold">{rejectedCount}</p>
+          </div>
+          <div className="bg-yellow-100 p-4 rounded-lg shadow text-center">
+            <p className="text-yellow-700">Pending</p>
+            <p className="text-2xl font-bold">{pendingCount}</p>
+          </div>
+        </div>
+
+        {/* Search */}
+        <div className="mb-4">
+          <input
+            type="text"
+            placeholder="Search by email or status..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full p-3 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        {/* Booking Table */}
+        <div className="bg-white shadow-lg rounded-lg overflow-x-auto">
+          <table className="table-auto w-full border-collapse">
+            <thead className="bg-gray-200">
+              <tr>
+                <th className="border px-4 py-2 text-left">Email</th>
+                <th className="border px-4 py-2 text-left">Seats</th>
+                <th className="border px-4 py-2 text-left">Status</th>
+                <th className="border px-4 py-2 text-left">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+            </thead>
+            <tbody>
+              {filteredRequests.map((req, index) => (
+                <tr key={req._id} className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}>
+                  <td className="border px-4 py-2">{req.email}</td>
+                  <td className="border px-4 py-2">{req.seats.join(", ")}</td>
+                  <td className="border px-4 py-2">
+                    <span className={`px-2 py-1 rounded-full text-white text-sm font-semibold ${
+                      req.status === "approve" ? "bg-green-500" :
+                      req.status === "reject" ? "bg-red-500" :
+                      "bg-yellow-500"
+                    }`}>
+                      {req.status}
+                    </span>
+                  </td>
+                  <td className="border px-4 py-2 space-x-2">
+                    {req.status === "pending" && (
+                      <>
+                        <button
+                          onClick={() => handleAction(req._id, "approve")}
+                          className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded transition"
+                        >
+                          Approve
+                        </button>
+                        <button
+                          onClick={() => handleAction(req._id, "reject")}
+                          className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded transition"
+                        >
+                          Reject
+                        </button>
+                      </>
+                    )}
+                  </td>
+                </tr>
+              ))}
+              {filteredRequests.length === 0 && (
+                <tr>
+                  <td colSpan={4} className="text-center p-4 text-gray-500">
+                    No requests found.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </main>
     </div>
   );
 };
 
-export default Admin;
+export default AdminDashboard;

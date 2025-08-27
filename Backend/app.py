@@ -212,28 +212,26 @@ def update_booking(id):
     if action not in ['approve', 'reject']:
         return jsonify({'success': False, 'message': 'Invalid action'}), 400
 
-    # Find the pending booking request
     booking_request = db.booking_requests.find_one({'_id': ObjectId(id)})
     if not booking_request:
         return jsonify({'success': False, 'message': 'Request not found'}), 404
 
     if action == 'approve':
-        # Insert into the unified booked seats collection
+        # Insert into booked_seats
         db['booked_seats'].insert_one({
             'email': booking_request['email'],
             'seats': booking_request['seats'],
             'status': 'booked'
         })
         send_booking_email(booking_request['email'], booking_request['seats'], status="approved")
+        # Update status in pending requests
+        db.booking_requests.update_one({'_id': ObjectId(id)}, {'$set': {'status': 'approved'}})
     elif action == 'reject':
         send_booking_email(booking_request['email'], booking_request['seats'], status="rejected")
-
-    # Remove from pending requests regardless of action
-    db.booking_requests.delete_one({'_id': ObjectId(id)})
-    
+        # ✅ Instead of deleting, just update status
+        db.booking_requests.update_one({'_id': ObjectId(id)}, {'$set': {'status': 'rejected'}})
 
     return jsonify({'success': True, 'message': f'Request {action}d successfully'}), 200
-
 
 
 # 👇 Get all booked seats
