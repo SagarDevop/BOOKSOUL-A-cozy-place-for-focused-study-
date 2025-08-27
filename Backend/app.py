@@ -44,8 +44,8 @@ users_collection = db['users']# 🔥 your collection name
 users_collection.insert_one({
     "name": "Super Admin",
     "email": "admin@example.com",
-    "password": generate_password_hash("Admin@123"),  # hashed password
-    "role": "admin"
+    "password": "Admin@123",
+   "role": "admin"
 })
 contact_collection = db['contact']  # 🔥 your collection name
 seat_booking_collection = db['seatBookings'] 
