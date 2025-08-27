@@ -10,6 +10,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import datetime
 import random
+from bson import ObjectId
 
 # Load environment variables from .env file
 load_dotenv()
@@ -167,6 +168,8 @@ def verify_otp():
 
     return jsonify({'message': 'Password updated successfully'}), 200
 
+
+
 @app.route('/request-booking', methods=['POST'])
 def request_booking():
     data = request.get_json()
@@ -179,19 +182,50 @@ def request_booking():
     booking_request = {
         'email': email,
         'seats': seats,
-        'status': 'pending'  # 👈 all requests start as pending
+        'status': 'pending'
     }
 
-    db.booking_requests.insert_one(booking_request)
+    result = db.booking_requests.insert_one(booking_request)
 
-    return jsonify({'message': 'Booking request submitted!', 'request': booking_request}), 200
+    # Add the inserted _id (converted to string)
+    booking_request['_id'] = str(result.inserted_id)
+
+    return jsonify({
+        'message': 'Booking request submitted!',
+        'request': booking_request
+    }), 200
+
 
 @app.route('/admin/requests', methods=['GET'])
 def get_requests():
-    requests = list(db.booking_requests.find({}))
-    for r in requests:
-        r['_id'] = str(r['_id'])  # Convert ObjectId → string
-    return jsonify(requests)
+    requests = list(db.booking_requests.find())
+    # Convert ObjectId to string for each request
+    for req in requests:
+        req['_id'] = str(req['_id'])
+    return jsonify(requests), 200
+
+@app.route('/admin/requests/<id>', methods=['PUT'])
+def approve_request(id):
+    data = request.get_json()
+    new_status = data.get('status')
+
+    if new_status not in ['approved', 'rejected']:
+        return jsonify({'error': 'Invalid status'}), 400
+
+    # Update request status
+    result = db.booking_requests.update_one(
+        {'_id': ObjectId(id)},
+        {'$set': {'status': new_status}}
+    )
+
+    if result.matched_count == 0:
+        return jsonify({'error': 'Request not found'}), 404
+
+    # Fetch updated request
+    updated_req = db.booking_requests.find_one({'_id': ObjectId(id)})
+    updated_req['_id'] = str(updated_req['_id'])
+
+    return jsonify({'message': 'Request updated', 'request': updated_req}), 200
 
 
 

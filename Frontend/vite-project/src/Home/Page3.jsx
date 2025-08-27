@@ -88,7 +88,7 @@ export default function Page3() {
     }
   } catch (error) {
     console.error("Error requesting booking:", error);
-    toast.error("Something went wrong.");
+    toast.error("Something went wrong.",error);
   }
 };
 
