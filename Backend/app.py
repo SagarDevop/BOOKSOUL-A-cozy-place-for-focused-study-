@@ -18,7 +18,7 @@ load_dotenv()
 
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
 MONGO_URI = os.getenv("MONGO_URI")
 
