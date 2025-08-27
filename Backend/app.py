@@ -223,13 +223,13 @@ def update_booking(id):
             'seats': booking_request['seats'],
             'status': 'booked'
         })
-        send_booking_email(booking_request['email'], booking_request['seats'], status="approved")
+        send_booking_email(booking_request['email'], booking_request['seats'], status="approve")
         # Update status in pending requests
-        db.booking_requests.update_one({'_id': ObjectId(id)}, {'$set': {'status': 'approved'}})
+        db.booking_requests.update_one({'_id': ObjectId(id)}, {'$set': {'status': 'approve'}})
     elif action == 'reject':
-        send_booking_email(booking_request['email'], booking_request['seats'], status="rejected")
+        send_booking_email(booking_request['email'], booking_request['seats'], status="reject")
         # ✅ Instead of deleting, just update status
-        db.booking_requests.update_one({'_id': ObjectId(id)}, {'$set': {'status': 'rejected'}})
+        db.booking_requests.update_one({'_id': ObjectId(id)}, {'$set': {'status': 'reject'}})
 
     return jsonify({'success': True, 'message': f'Request {action}d successfully'}), 200
 
