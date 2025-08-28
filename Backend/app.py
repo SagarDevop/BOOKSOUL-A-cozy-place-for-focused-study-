@@ -21,6 +21,9 @@ app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
 MONGO_URI = os.getenv("MONGO_URI")
+admin_name = os.getenv("ADMIN_NAME")
+admin_email = os.getenv("ADMIN_EMAIL")
+admin_password = os.getenv("ADMIN_PASSWORD")
 
 
 # ✅ MongoDB connection
@@ -43,10 +46,10 @@ except Exception as e:
 db = client['library_web']  # 🔥 your db name
 users_collection = db['users']# 🔥 your collection name
 users_collection.insert_one({
-    "name": "Super Admin",
-    "email": "admin@example.com",
-    "password": "Admin@123",
-   "role": "admin"
+    "name": admin_name,
+    "email": admin_email,
+    "password": admin_password,
+    "role": "admin"
 })
 contact_collection = db['contact']  # 🔥 your collection name
 seat_booking_collection = db['seatBookings'] 
@@ -77,7 +80,7 @@ def send_otp_email(to_email, otp):
         """
 
         message = MIMEMultipart("alternative")
-        message["From"] = f"BookSoul <{sender_email}>"
+        message["From"] = f"Chitrakoot Digital Library <{sender_email}>"
         message["To"] = to_email
         message["Subject"] = subject
         message.attach(MIMEText(text, "plain"))
@@ -206,13 +209,13 @@ def send_admin_booking_email():
 
     try:
         sender_email = "Sagar.singh44818@gmail.com"
-        sender_password = "wjyv znpq ondf qlky"  # App password
-        admin_email = "warshasingh21@gmail.com"  # Replace with actual admin email
+        sender_password = "wjyv znpq ondf qlky"  
+        admin_email = "pandeyshiv5798@gmail.com"  
 
         subject = "📌 New Seat Booking Request"
 
         text = f"""
-        Hello Admin,
+        Hello ,Shiv Pandey
 
         A new booking request has been made.
 
@@ -225,19 +228,19 @@ def send_admin_booking_email():
         html = f"""
         <html>
         <body>
-            <p>Hello Admin,</p>
+            <p>Hello Shiv,</p>
             <p>A new booking request has been made.</p>
             <p><strong>User Email:</strong> {user_email}</p>
             <p><strong>Seats Requested:</strong> {', '.join(seats)}</p>
             <p>Please review and approve the booking in the admin panel.</p>
             <br>
-            <p>Thanks,<br>BookSoul Booking System</p>
+            <p>Thanks,<br>Chitrakoot Digital Library Booking System</p>
         </body>
         </html>
         """
 
         message = MIMEMultipart("alternative")
-        message["From"] = f"BookSoul <{sender_email}>"
+        message["From"] = f"Chitrakoot Digital Library <{sender_email}>"
         message["To"] = admin_email
         message["Subject"] = subject
         message.attach(MIMEText(text, "plain"))
@@ -333,7 +336,7 @@ Booking Date & Time: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 Enjoy your study time! If you did not make this booking, contact us immediately.
 
 Thanks,
-StudySpace Booking Team
+Chitrakoot Digital Library Booking Team
 """
             html_msg = f"""
 <html>
@@ -362,7 +365,7 @@ Booking Date & Time: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 You may try booking different seats or contact us for assistance.
 
 Thanks,
-StudySpace Booking Team
+Chitrakoot Digital Library Booking Team
 """
             html_msg = f"""
 <html>
@@ -375,7 +378,7 @@ StudySpace Booking Team
       <li><strong>Booking Time:</strong> {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</li>
     </ul>
     <p>You may try booking different seats or contact us for assistance.</p>
-    <p><strong>– StudySpace Booking Team</strong></p>
+    <p><strong>– Chitrakoot Digital Library Booking Team</strong></p>
   </body>
 </html>
 """
@@ -384,7 +387,7 @@ StudySpace Booking Team
 
         # Create message container
         message = MIMEMultipart('alternative')
-        message['From'] = f"StudySpace Booking <{sender_email}>"
+        message['From'] = f"Chitrakoot Digital Library Booking <{sender_email}>"
         message['To'] = to_email
         message['Subject'] = subject
         message['Date'] = datetime.datetime.now().strftime('%a, %d %b %Y %H:%M:%S')
