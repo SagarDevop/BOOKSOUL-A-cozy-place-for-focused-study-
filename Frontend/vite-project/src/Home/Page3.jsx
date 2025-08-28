@@ -4,11 +4,11 @@ import { useNavigate } from "react-router-dom";
 
 // Blocks with left and right seat counts
 const seatBlocks = [
-  { id: "Block1", leftSeats: 6, rightSeats: 6 },
-  { id: "Block2", leftSeats: 7, rightSeats: 7 },
-  { id: "Block3", leftSeats: 7, rightSeats: 4 },
-  { id: "Block4", leftSeats: 5, rightSeats: 5 },
-  { id: "Block5", leftSeats: 5, rightSeats: 0 },
+  { id: "Block1", leftSeats: 3, rightSeats: 0 },
+  { id: "Block2", leftSeats: 3, rightSeats: 3 },
+  { id: "Block3", leftSeats: 3, rightSeats: 3 },
+  { id: "Block4", leftSeats: 0, rightSeats: 3 },
+  { id: "Wall side", leftSeats: 0, rightSeats: 9 },
 ];
 
 export default function Page3() {

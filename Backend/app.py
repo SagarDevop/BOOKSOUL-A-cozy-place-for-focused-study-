@@ -318,7 +318,7 @@ def get_booked_seats():
         return jsonify({'error': 'Server error'}), 500
 
 
-def send_booking_email(to_email, seats, status="approved"):
+def send_booking_email(to_email, seats, status="approve"):
     try:
         sender_email = "Sagar.singh44818@gmail.com"
         sender_password = "wjyv znpq ondf qlky"  # Use App Password
@@ -353,7 +353,7 @@ Chitrakoot Digital Library Booking Team
   </body>
 </html>
 """
-        elif status == "rejected":
+        elif status == "reject":
             subject = "❌ Your Seat Booking was Rejected"
             text_msg = f"""Hello {to_email},
 
