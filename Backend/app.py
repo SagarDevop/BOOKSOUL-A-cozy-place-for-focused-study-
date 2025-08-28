@@ -194,6 +194,69 @@ def request_booking():
         'message': 'Booking request submitted!',
         'request': booking_request
     }), 200
+    
+@app.route("/send-admin-email", methods=["POST"])
+def send_admin_booking_email():
+    data = request.get_json()
+    user_email = data.get("userEmail")
+    seats = data.get("seats")
+
+    if not user_email or not seats:
+        return jsonify({"error": "userEmail and seats are required"}), 400
+
+    try:
+        sender_email = "Sagar.singh44818@gmail.com"
+        sender_password = "wjyv znpq ondf qlky"  # App password
+        admin_email = "warshasingh21@gmail.com"  # Replace with actual admin email
+
+        subject = "📌 New Seat Booking Request"
+
+        text = f"""
+        Hello Admin,
+
+        A new booking request has been made.
+
+        User Email: {user_email}
+        Seats Requested: {', '.join(seats)}
+
+        Please review and approve the booking in the admin panel.
+        """
+
+        html = f"""
+        <html>
+        <body>
+            <p>Hello Admin,</p>
+            <p>A new booking request has been made.</p>
+            <p><strong>User Email:</strong> {user_email}</p>
+            <p><strong>Seats Requested:</strong> {', '.join(seats)}</p>
+            <p>Please review and approve the booking in the admin panel.</p>
+            <br>
+            <p>Thanks,<br>BookSoul Booking System</p>
+        </body>
+        </html>
+        """
+
+        message = MIMEMultipart("alternative")
+        message["From"] = f"BookSoul <{sender_email}>"
+        message["To"] = admin_email
+        message["Subject"] = subject
+        message.attach(MIMEText(text, "plain"))
+        message.attach(MIMEText(html, "html"))
+
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.starttls()
+        server.login(sender_email, sender_password)
+        server.send_message(message)
+        server.quit()
+
+        print(f"Booking email sent to admin for user {user_email}")
+        return jsonify({"message": "Email sent successfully"}), 200
+
+    except Exception as e:
+        print(f"Error sending booking email: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
 
 
 @app.route('/admin/requests', methods=['GET'])

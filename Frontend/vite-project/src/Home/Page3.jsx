@@ -44,7 +44,7 @@ export default function Page3() {
     }
   };
 
-  const handleBooking = async () => {
+const handleBooking = async () => {
   if (selectedSeats.length === 0) return;
 
   // 🔥 Check user login from localStorage
@@ -78,7 +78,23 @@ export default function Page3() {
     if (response.ok) {
       toast.success("Booking request sent! Waiting for admin approval.");
 
-      // 2️⃣ Navigate to confirm-booking page (with selected seats)
+      // 2️⃣ Send email to admin
+      await fetch(
+        "https://booksoul-a-cozy-place-for-focused-study.onrender.com/send-admin-email",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userEmail: email,
+            seats: selectedSeats,
+            message: `User ${email} requested seats: ${selectedSeats.join(", ")}`,
+          }),
+        }
+      );
+
+      // 3️⃣ Navigate to confirm-booking page (with selected seats)
       navigate("/confirm-booking", { state: { selectedSeats, email } });
 
       // ✅ Reset selected seats locally
@@ -88,9 +104,10 @@ export default function Page3() {
     }
   } catch (error) {
     console.error("Error requesting booking:", error);
-    toast.error("Something went wrong.",error);
+    toast.error("Something went wrong.");
   }
 };
+
 
   
   
