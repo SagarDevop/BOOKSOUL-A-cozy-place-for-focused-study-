@@ -121,6 +121,7 @@ def signup():
 def login():
     data = request.get_json()
     email = data.get('email')
+    
     password = data.get('password')
 
     user = users_collection.find_one({'email': email})
@@ -180,6 +181,7 @@ def request_booking():
     data = request.get_json()
     email = data.get('email')
     seats = data.get('seats')
+    phone = data.get('phone')
     
     
     if not email or not seats:
@@ -187,6 +189,7 @@ def request_booking():
 
     booking_request = {
         'email': email,
+        'phone': phone,
         'seats': seats,
         'status': 'pending'
     }

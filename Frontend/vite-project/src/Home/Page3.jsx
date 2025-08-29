@@ -50,6 +50,7 @@ const handleBooking = async () => {
   // 🔥 Check user login from localStorage
   const user = JSON.parse(localStorage.getItem("user"));
   const email = user?.email;
+  const phone = user?.phone;
 
   if (!email) {
     toast.error("Please log in to book seats.");
@@ -68,6 +69,7 @@ const handleBooking = async () => {
         body: JSON.stringify({
           seats: selectedSeats,
           email,
+          phone,
           status: "pending", // 👈 always pending until admin approves
         }),
       }
@@ -88,8 +90,11 @@ const handleBooking = async () => {
           },
           body: JSON.stringify({
             userEmail: email,
+            phone: phone,
             seats: selectedSeats,
-            message: `User ${email} requested seats: ${selectedSeats.join(", ")}`,
+            
+            
+             message: `User ${email} (📞 ${phone}) requested seats: ${selectedSeats.join(", ")}`,
           }),
         }
       );
