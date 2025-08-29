@@ -128,6 +128,7 @@ const AdminDashboard = () => {
             <thead className="bg-gray-200">
               <tr>
                 <th className="border px-4 py-2 text-left">Email</th>
+                <th className="border px-4 py-2 text-left">Phone</th>
                 <th className="border px-4 py-2 text-left">Seats</th>
                 <th className="border px-4 py-2 text-left">Status</th>
                 <th className="border px-4 py-2 text-left">Actions</th>
@@ -137,6 +138,7 @@ const AdminDashboard = () => {
               {filteredRequests.map((req, index) => (
                 <tr key={req._id} className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}>
                   <td className="border px-4 py-2">{req.email}</td>
+                  <td className="border px-4 py-2">{req.phone}</td>
                   <td className="border px-4 py-2">{req.seats.join(", ")}</td>
                   <td className="border px-4 py-2">
                     <span className={`px-2 py-1 rounded-full text-white text-sm font-semibold ${

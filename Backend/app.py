@@ -181,6 +181,7 @@ def request_booking():
     email = data.get('email')
     seats = data.get('seats')
     
+    
     if not email or not seats:
         return jsonify({'error': 'Email and seats are required'}), 400
 
@@ -205,6 +206,7 @@ def send_admin_booking_email():
     data = request.get_json()
     user_email = data.get("userEmail")
     seats = data.get("seats")
+    phone = data.get("phone")
 
     if not user_email or not seats:
         return jsonify({"error": "userEmail and seats are required"}), 400
@@ -222,6 +224,7 @@ def send_admin_booking_email():
         A new booking request has been made.
 
         User Email: {user_email}
+        Phone: {phone}
         Seats Requested: {', '.join(seats)}
 
         Please review and approve the booking in the admin panel.
@@ -233,6 +236,7 @@ def send_admin_booking_email():
             <p>Hello Shiv,</p>
             <p>A new booking request has been made.</p>
             <p><strong>User Email:</strong> {user_email}</p>
+            <p><strong>Phone:</strong> {phone}</p>
             <p><strong>Seats Requested:</strong> {', '.join(seats)}</p>
             <p>Please review and approve the booking in the admin panel.</p>
             <br>
