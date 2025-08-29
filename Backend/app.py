@@ -107,13 +107,14 @@ def home():
 def signup():
     data = request.get_json()
     email = data.get('email')
+    phone = data.get('phone')
     password = data.get('password')
     name = data.get('name')
 
     if users_collection.find_one({'email': email}):
         return jsonify({'error': 'Email already exists'}), 400
     
-    users_collection.insert_one({'email': email, 'password': password, 'name': name , 'role': 'user'})
+    users_collection.insert_one({'email': email, 'password': password, 'name': name ,'phone':phone, 'role': 'user'})
     return jsonify({'message': 'User registered successfully!'}), 200
 
 @app.route('/login', methods=['POST'])

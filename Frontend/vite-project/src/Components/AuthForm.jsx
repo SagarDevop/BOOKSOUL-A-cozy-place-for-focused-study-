@@ -17,6 +17,7 @@ const AuthForm = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    phone: "",
     password: "",
     otp: "",
     newPassword: "",
@@ -30,7 +31,8 @@ const AuthForm = () => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const baseUrl = 'https://booksoul-a-cozy-place-for-focused-study.onrender.com';
+  const baseUrl =
+    "https://booksoul-a-cozy-place-for-focused-study.onrender.com";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -52,7 +54,11 @@ const AuthForm = () => {
         body = { email: formData.email };
       } else if (mode === "verify-otp") {
         url = `${baseUrl}/verify-otp`;
-        body = { email: formData.email, otp: formData.otp, newPassword: formData.newPassword };
+        body = {
+          email: formData.email,
+          otp: formData.otp,
+          newPassword: formData.newPassword,
+        };
       }
 
       const response = await fetch(url, {
@@ -78,50 +84,75 @@ const AuthForm = () => {
       }
 
       if (mode === "login" || mode === "signup") {
-  const userData = {
-    name: data.user?.name || formData.name,
-    email: data.user?.email || formData.email,
-    role: data.user?.role || "user"  // 👈 store role as well
-  };
+        const userData = {
+          name: data.user?.name || formData.name,
+          email: data.user?.email || formData.email,
+          phone: data.user?.phone || formData.phone,
+          role: data.user?.role || "user", // 👈 store role as well
+        };
 
-  localStorage.setItem("user", JSON.stringify(userData));
-  window.dispatchEvent(new Event("userChanged"));
+        localStorage.setItem("user", JSON.stringify(userData));
+        window.dispatchEvent(new Event("userChanged"));
 
-  toast.success(data.message || "Success!");
+        toast.success(data.message || "Success!");
 
-  setTimeout(() => {
-    if (userData.role === "admin") {
-      navigate("/admin");   // 👈 go to admin dashboard
-    } else {
-      navigate("/");    // 👈 normal user goes home
-    }
-  }, 1500);
-}
-
+        setTimeout(() => {
+          if (userData.role === "admin") {
+            navigate("/admin"); // 👈 go to admin dashboard
+          } else {
+            navigate("/"); // 👈 normal user goes home
+          }
+        }, 1500);
+      }
 
       if (mode === "request-reset") {
         toast.success("OTP sent to your email!");
         setMode("verify-otp");
       }
-
     } catch (err) {
       console.error(err);
-      toast.error("Unexpected error!",err);
+      toast.error("Unexpected error!", err);
     } finally {
       setLoading(false);
     }
   };
 
   const renderTitle = () => {
-    if (mode === "login") return <> <LogIn size={24} /> Welcome Back! 👋</>;
-    if (mode === "signup") return <> <UserPlus size={24} /> Join Us Today! 🚀</>;
-    if (mode === "request-reset") return <> <Send size={24} /> Reset Your Password</>;
-    if (mode === "verify-otp") return <> <KeyRound size={24} /> Verify OTP</>;
+    if (mode === "login")
+      return (
+        <>
+          {" "}
+          <LogIn size={24} /> Welcome Back! 👋
+        </>
+      );
+    if (mode === "signup")
+      return (
+        <>
+          {" "}
+          <UserPlus size={24} /> Join Us Today! 🚀
+        </>
+      );
+    if (mode === "request-reset")
+      return (
+        <>
+          {" "}
+          <Send size={24} /> Reset Your Password
+        </>
+      );
+    if (mode === "verify-otp")
+      return (
+        <>
+          {" "}
+          <KeyRound size={24} /> Verify OTP
+        </>
+      );
   };
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 to-purple-200 px-4 overflow-hidden">
-      {success && <Confetti width={window.innerWidth} height={window.innerHeight} />}
+      {success && (
+        <Confetti width={window.innerWidth} height={window.innerHeight} />
+      )}
       <div className="absolute top-[-100px] right-[-100px] w-[300px] h-[300px] bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob"></div>
       <div className="absolute bottom-[-100px] left-[-100px] w-[300px] h-[300px] bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-blob animation-delay-2000"></div>
 
@@ -148,17 +179,35 @@ const AuthForm = () => {
         ) : (
           <form onSubmit={handleSubmit} className="space-y-5">
             {mode === "signup" && (
-              <div>
-                <label className="block text-sm mb-1 text-gray-700">Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  className="w-full border border-gray-300 rounded-xl px-4 py-2"
-                />
-              </div>
+              <>
+                <div>
+                  <label className="block text-sm mb-1 text-gray-700">
+                    Name
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                    className="w-full border border-gray-300 rounded-xl px-4 py-2"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm mb-1 text-gray-700">
+                    Phone
+                  </label>
+                  <input
+                    type="text"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    required
+                    className="w-full border border-gray-300 rounded-xl px-4 py-2"
+                  />
+                </div>
+              </>
             )}
 
             <div>
@@ -175,7 +224,9 @@ const AuthForm = () => {
 
             {(mode === "login" || mode === "signup") && (
               <div>
-                <label className="block text-sm mb-1 text-gray-700">Password</label>
+                <label className="block text-sm mb-1 text-gray-700">
+                  Password
+                </label>
                 <div className="relative">
                   <input
                     type={showPassword ? "text" : "password"}
@@ -199,7 +250,9 @@ const AuthForm = () => {
             {mode === "verify-otp" && (
               <>
                 <div>
-                  <label className="block text-sm mb-1 text-gray-700">OTP</label>
+                  <label className="block text-sm mb-1 text-gray-700">
+                    OTP
+                  </label>
                   <input
                     type="text"
                     name="otp"
@@ -210,7 +263,9 @@ const AuthForm = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm mb-1 text-gray-700">New Password</label>
+                  <label className="block text-sm mb-1 text-gray-700">
+                    New Password
+                  </label>
                   <input
                     type="password"
                     name="newPassword"
@@ -241,20 +296,40 @@ const AuthForm = () => {
           {mode === "login" && (
             <>
               Don't have an account?{" "}
-              <button onClick={() => setMode("signup")} className="text-purple-600 font-semibold hover:underline">Sign Up</button>
+              <button
+                onClick={() => setMode("signup")}
+                className="text-purple-600 font-semibold hover:underline"
+              >
+                Sign Up
+              </button>
               <br />
-              <button onClick={() => setMode("request-reset")} className="mt-2 text-blue-500 hover:underline">Forgot Password?</button>
+              <button
+                onClick={() => setMode("request-reset")}
+                className="mt-2 text-blue-500 hover:underline"
+              >
+                Forgot Password?
+              </button>
             </>
           )}
           {mode === "signup" && (
             <>
               Already have an account?{" "}
-              <button onClick={() => setMode("login")} className="text-purple-600 font-semibold hover:underline">Login</button>
+              <button
+                onClick={() => setMode("login")}
+                className="text-purple-600 font-semibold hover:underline"
+              >
+                Login
+              </button>
             </>
           )}
           {(mode === "request-reset" || mode === "verify-otp") && (
             <>
-              <button onClick={() => setMode("login")} className="text-purple-600 hover:underline">← Back to Login</button>
+              <button
+                onClick={() => setMode("login")}
+                className="text-purple-600 hover:underline"
+              >
+                ← Back to Login
+              </button>
             </>
           )}
         </div>
