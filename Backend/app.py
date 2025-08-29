@@ -45,12 +45,13 @@ except Exception as e:
 
 db = client['library_web']  # 🔥 your db name
 users_collection = db['users']# 🔥 your collection name
-users_collection.insert_one({
-    "name": admin_name,
-    "email": admin_email,
-    "password": admin_password,
-    "role": "admin"
-})
+if not users_collection.find_one({"email": admin_email}):
+    users_collection.insert_one({
+        "name": admin_name,
+        "email": admin_email,
+        "password": admin_password,
+        "role": "admin"
+    })
 contact_collection = db['contact']  # 🔥 your collection name
 seat_booking_collection = db['seatBookings'] 
 
