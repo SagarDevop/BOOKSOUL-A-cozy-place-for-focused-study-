@@ -280,7 +280,7 @@ def get_requests():
     return jsonify(requests), 200
 
 @app.route('/booked-admin', methods=['GET'])
-def get_requests():
+def get_info():
     try:
         # Fetch all booking requests
         requests = list(db['booked_seats'].find())
