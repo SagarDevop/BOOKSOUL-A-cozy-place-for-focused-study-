@@ -9,20 +9,27 @@ function Analyticsfee() {
   }, []);
 
   const fetchRequests = async () => {
-    try {
-      const res = await fetch(
-        "https://booksoul-a-cozy-place-for-focused-study.onrender.com/booked-admin"
-      );
-      const data = await res.json();
-      setRequests(data);
-      console.log(data);
-    } catch (error) {
-      console.error("Error fetching requests", error);
+  try {
+    const res = await fetch(
+      "https://booksoul-a-cozy-place-for-focused-study.onrender.com/booked-admin"
+    );
+    const data = await res.json();
+    console.log("API Response:", data);
+
+    // Only set the array part
+    if (data.success && Array.isArray(data.data)) {
+      setRequests(data.data);
+    } else {
+      setRequests([]); // fallback if no array
     }
-  };
+  } catch (error) {
+    console.error("Error fetching requests", error);
+  }
+};
+
 
   // Save subscription period for user
-  const handleSave = async (userId, seatId, startDate, durationMonths) => {
+  const handleSave = async (email, seatId, startDate, durationMonths) => {
     try {
       const res = await fetch(
         "https://booksoul-a-cozy-place-for-focused-study.onrender.com/admin/set-subscription",
@@ -30,7 +37,7 @@ function Analyticsfee() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            userId,
+            email,
             seatId,
             startDate,
             durationMonths,
@@ -111,7 +118,7 @@ function Analyticsfee() {
                     <button
                       onClick={() =>
                         handleSave(
-                          req._id,
+                          req.email,
                           req.seats[0],
                           req.startDate,
                           req.durationMonths

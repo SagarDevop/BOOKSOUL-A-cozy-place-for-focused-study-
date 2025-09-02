@@ -330,6 +330,39 @@ def update_booking(id):
 
     return jsonify({'success': True, 'message': f'Request {action}d successfully'}), 200
 
+app.route('/admin/set-subscription', methods=['POST'])
+def set_subscription():
+    data = request.get_json()
+    email = data.get('email')
+    seat_id = data.get('seatId')
+    start_date = data.get('startDate')
+    duration_months = data.get('durationMonths')
+
+    if not email or not seat_id or not start_date or not duration_months:
+        return jsonify({'error': 'All fields are required'}), 400
+
+    user = users_collection.find_one({'email': email})
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+
+    end_date = (datetime.datetime.strptime(start_date, '%Y-%m-%d') + datetime.timedelta(days=30*duration_months)).strftime('%Y-%m-%d')
+
+    db['Admin_verified'].insert_one({
+        'email': email,
+        'seatId': seat_id,
+        'startDate': start_date,
+        'durationMonths': duration_months,
+        'endDate': end_date
+    }
+       
+    )
+
+    return jsonify({
+    'success': True,
+    'message': 'Subscription set successfully'
+    }), 200
+
+
 
 # 👇 Get all booked seats
 @app.route('/booked-seats', methods=['GET'])
