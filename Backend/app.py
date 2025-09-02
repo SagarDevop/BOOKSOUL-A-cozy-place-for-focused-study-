@@ -279,6 +279,28 @@ def get_requests():
         req['_id'] = str(req['_id'])
     return jsonify(requests), 200
 
+@app.route('/booked-admin', methods=['GET'])
+def get_requests():
+    try:
+        # Fetch all booking requests
+        requests = list(db['booked_seats'].find())
+
+        analytics_data = []
+        for req in requests:
+            analytics_data.append({
+                "_id": str(req["_id"]),
+                "email": req.get("email", ""),
+                "seats": req.get("seats", []),
+            })
+
+        return jsonify({"success": True, "data": analytics_data}), 200
+
+    except Exception as e:
+        print("Error in /booked-admin:", e)
+        return jsonify({"success": False, "error": "Server error"}), 500
+
+
+
 @app.route('/update_booking/<id>', methods=['POST'])
 def update_booking(id):
     data = request.get_json()
