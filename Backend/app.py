@@ -333,7 +333,7 @@ def send_booking_email(to_email, seats, status="approve"):
         sender_password = "wjyv znpq ondf qlky"  # Use App Password
 
         # Subject and messages based on status
-        if status == "approved":
+        if status == "approve":
             subject = "🎟️ Your Seat Booking is Approved!"
             text_msg = f"""Hello {to_email},
 

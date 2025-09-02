@@ -11,6 +11,7 @@ import { Toaster } from 'react-hot-toast';
 import { motion } from 'framer-motion';
 import ConfirmBooking from './Components/ConfirmBooking'
 import Admin from './Components/Admin'
+import Analyticsfee from './Components/Analyticsfee'
 
 function App() {
   
@@ -65,6 +66,8 @@ function App() {
         <Route path="/login" element={<AuthForm/>} />
         <Route path="/confirm-booking" element={<ConfirmBooking />} />
         <Route path="/admin" element={<Admin />} />
+        <Route path="/admin/analytics" element={<Analyticsfee />} />
+        
         
         
       </Routes>

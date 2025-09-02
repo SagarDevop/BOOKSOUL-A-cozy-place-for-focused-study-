@@ -75,8 +75,8 @@ const AdminDashboard = () => {
       <aside className="w-64 bg-white shadow-lg p-6 flex flex-col">
         <h2 className="text-2xl font-bold mb-6">Admin Panel</h2>
         <nav className="flex flex-col space-y-3">
-          <a href="" className="text-gray-700 hover:text-blue-600">Dashboard</a>
-          <a href="#" className="text-gray-700 hover:text-blue-600">Analytics</a>
+          <a href="/admin" className="text-gray-700 hover:text-blue-600">Dashboard</a>
+          <a href="/admin/analytics" className="text-gray-700 hover:text-blue-600">Analytics</a>
         
         </nav>
       </aside>
