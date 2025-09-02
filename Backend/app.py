@@ -217,7 +217,7 @@ def send_admin_booking_email():
     try:
         sender_email = "Sagar.singh44818@gmail.com"
         sender_password = "wjyv znpq ondf qlky"  
-        admin_email = "pandeyshiv5798@gmail.com"  
+        admin_email = "warshasingh21@gmail.com"  
 
         subject = "📌 New Seat Booking Request"
 
