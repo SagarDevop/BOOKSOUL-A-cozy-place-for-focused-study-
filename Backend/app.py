@@ -330,7 +330,7 @@ def update_booking(id):
 
     return jsonify({'success': True, 'message': f'Request {action}d successfully'}), 200
 
-app.route('/admin/set-subscription', methods=['POST'])
+@app.route('/admin/set-subscription', methods=['POST'])
 def set_subscription():
     data = request.get_json()
     email = data.get('email')
